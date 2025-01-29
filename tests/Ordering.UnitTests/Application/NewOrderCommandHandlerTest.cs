@@ -10,6 +10,7 @@ public class NewOrderRequestHandlerTest
     private readonly IIdentityService _identityServiceMock;
     private readonly IMediator _mediator;
     private readonly IOrderingIntegrationEventService _orderingIntegrationEventService;
+    private readonly IBuyerAggregateFactory _buyerAggregateFactory;
 
     public NewOrderRequestHandlerTest()
     {
@@ -18,6 +19,7 @@ public class NewOrderRequestHandlerTest
         _identityServiceMock = Substitute.For<IIdentityService>();
         _orderingIntegrationEventService = Substitute.For<IOrderingIntegrationEventService>();
         _mediator = Substitute.For<IMediator>();
+        _buyerAggregateFactory = new Buyer.Factory();
     }
 
     [TestMethod]
@@ -52,12 +54,12 @@ public class NewOrderRequestHandlerTest
     public void Handle_throws_exception_when_no_buyerId()
     {
         //Assert
-        Assert.ThrowsException<ArgumentNullException>(() => new Buyer(string.Empty, string.Empty));
+        Assert.ThrowsException<ArgumentNullException>(() => _buyerAggregateFactory.Create(string.Empty, string.Empty));
     }
 
     private Buyer FakeBuyer()
     {
-        return new Buyer(Guid.NewGuid().ToString(), "1");
+        return _buyerAggregateFactory.Create(Guid.NewGuid().ToString(), "1");
     }
 
     private Order FakeOrder()

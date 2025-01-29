@@ -20,10 +20,16 @@ public class Buyer
         _paymentMethods = new List<PaymentMethod>();
     }
 
-    public Buyer(string identity, string name) : this()
+    public class Factory : IBuyerAggregateFactory
     {
-        IdentityGuid = !string.IsNullOrWhiteSpace(identity) ? identity : throw new ArgumentNullException(nameof(identity));
-        Name = !string.IsNullOrWhiteSpace(name) ? name : throw new ArgumentNullException(nameof(name));
+        public Buyer Create(string identity, string name)
+        {
+            return new Buyer
+            {
+                IdentityGuid = !string.IsNullOrWhiteSpace(identity) ? identity : throw new ArgumentNullException(nameof(identity)),
+                Name = !string.IsNullOrWhiteSpace(name) ? name : throw new ArgumentNullException(nameof(name))
+            };
+        }
     }
 
     public PaymentMethod VerifyOrAddPaymentMethod(

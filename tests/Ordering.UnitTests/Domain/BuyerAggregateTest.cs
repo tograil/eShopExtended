@@ -3,6 +3,8 @@
 [TestClass]
 public class BuyerAggregateTest
 {
+    private readonly IBuyerAggregateFactory _aggregateFactory = new Buyer.Factory();
+
     public BuyerAggregateTest()
     { }
 
@@ -14,7 +16,7 @@ public class BuyerAggregateTest
         var name = "fakeUser";
 
         //Act 
-        var fakeBuyerItem = new Buyer(identity, name);
+        var fakeBuyerItem = _aggregateFactory.Create(identity, name);
 
         //Assert
         Assert.IsNotNull(fakeBuyerItem);
@@ -28,7 +30,7 @@ public class BuyerAggregateTest
         var name = "fakeUser";
 
         //Act - Assert
-        Assert.ThrowsException<ArgumentNullException>(() => new Buyer(identity, name));
+        Assert.ThrowsException<ArgumentNullException>(() => _aggregateFactory.Create(identity, name));
     }
 
     [TestMethod]
@@ -44,7 +46,7 @@ public class BuyerAggregateTest
         var orderId = 1;
         var name = "fakeUser";
         var identity = new Guid().ToString();
-        var fakeBuyerItem = new Buyer(identity, name);
+        var fakeBuyerItem = _aggregateFactory.Create(identity, name);
 
         //Act
         var result = fakeBuyerItem.VerifyOrAddPaymentMethod(cardTypeId, alias, cardNumber, securityNumber, cardHolderName, expiration, orderId);
@@ -121,7 +123,7 @@ public class BuyerAggregateTest
         var name = "fakeUser";
 
         //Act 
-        var fakeBuyer = new Buyer(Guid.NewGuid().ToString(), name);
+        var fakeBuyer = _aggregateFactory.Create(Guid.NewGuid().ToString(), name);
         fakeBuyer.VerifyOrAddPaymentMethod(cardTypeId, alias, cardNumber, cardSecurityNumber, cardHolderName, cardExpiration, orderId);
 
         //Assert

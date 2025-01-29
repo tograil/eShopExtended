@@ -6,14 +6,16 @@ public class ValidateOrAddBuyerAggregateWhenOrderStartedDomainEventHandler
     private readonly ILogger _logger;
     private readonly IBuyerRepository _buyerRepository;
     private readonly IOrderingIntegrationEventService _orderingIntegrationEventService;
+    private readonly IBuyerAggregateFactory _buyerAggregateFactory;
 
     public ValidateOrAddBuyerAggregateWhenOrderStartedDomainEventHandler(
         ILogger<ValidateOrAddBuyerAggregateWhenOrderStartedDomainEventHandler> logger,
         IBuyerRepository buyerRepository,
-        IOrderingIntegrationEventService orderingIntegrationEventService)
+        IOrderingIntegrationEventService orderingIntegrationEventService, IBuyerAggregateFactory buyerAggregateFactory)
     {
         _buyerRepository = buyerRepository ?? throw new ArgumentNullException(nameof(buyerRepository));
         _orderingIntegrationEventService = orderingIntegrationEventService ?? throw new ArgumentNullException(nameof(orderingIntegrationEventService));
+        _buyerAggregateFactory = buyerAggregateFactory;
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
     }
 
@@ -25,7 +27,7 @@ public class ValidateOrAddBuyerAggregateWhenOrderStartedDomainEventHandler
 
         if (!buyerExisted)
         {
-            buyer = new Buyer(domainEvent.UserId, domainEvent.UserName);
+            buyer = _buyerAggregateFactory.Create(domainEvent.UserId, domainEvent.UserName);
         }
 
         // REVIEW: The event this creates needs to be sent after SaveChanges has propagated the buyer Id. It currently only
