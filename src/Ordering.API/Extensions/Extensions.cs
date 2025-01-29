@@ -1,4 +1,6 @@
-﻿internal static class Extensions
+﻿using Order = eShop.Ordering.Domain.AggregatesModel.OrderAggregate.Order;
+
+internal static class Extensions
 {
     public static void AddApplicationServices(this IHostApplicationBuilder builder)
     {
@@ -22,6 +24,10 @@
         services.AddTransient<IIntegrationEventLogService, IntegrationEventLogService<OrderingContext>>();
 
         services.AddTransient<IOrderingIntegrationEventService, OrderingIntegrationEventService>();
+
+
+        //Add DDD factory
+        services.AddTransient<IOrderAggregateFactory, Order.Factory>();
 
         builder.AddRabbitMqEventBus("eventbus")
                .AddEventBusSubscriptions();

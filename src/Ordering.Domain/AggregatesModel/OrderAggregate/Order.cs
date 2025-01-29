@@ -49,19 +49,26 @@ public class Order
         _isDraft = false;
     }
 
-    public Order(string userId, string userName, Address address, int cardTypeId, string cardNumber, string cardSecurityNumber,
-            string cardHolderName, DateTime cardExpiration, int? buyerId = null, int? paymentMethodId = null) : this()
+    public class Factory : IOrderAggregateFactory
     {
-        BuyerId = buyerId;
-        PaymentId = paymentMethodId;
-        OrderStatus = OrderStatus.Submitted;
-        OrderDate = DateTime.UtcNow;
-        Address = address;
+        public Order Create(string userId, string userName, Address address, int cardTypeId, string cardNumber,
+            string cardSecurityNumber, string cardHolderName, DateTime cardExpiration, int? buyerId = null,
+            int? paymentMethodId = null)
+        {
+            var order = new Order
+            {
+                BuyerId = buyerId,
+                PaymentId = paymentMethodId,
+                OrderStatus = OrderStatus.Submitted,
+                OrderDate = DateTime.UtcNow,
+                Address = address
+            };
 
-        // Add the OrderStarterDomainEvent to the domain events collection 
-        // to be raised/dispatched when committing changes into the Database [ After DbContext.SaveChanges() ]
-        AddOrderStartedDomainEvent(userId, userName, cardTypeId, cardNumber,
-                                    cardSecurityNumber, cardHolderName, cardExpiration);
+            order.AddOrderStartedDomainEvent(userId, userName, cardTypeId, cardNumber,
+                cardSecurityNumber, cardHolderName, cardExpiration);
+
+            return order;
+        }
     }
 
     // DDD Patterns comment

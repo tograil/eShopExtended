@@ -1,13 +1,16 @@
 ﻿namespace eShop.Ordering.UnitTests.Domain;
 
 using eShop.Ordering.Domain.AggregatesModel.OrderAggregate;
-using eShop.Ordering.UnitTests.Domain;
 
 [TestClass]
 public class OrderAggregateTest
 {
+    private readonly IOrderAggregateFactory _aggregateFactory;
+
     public OrderAggregateTest()
-    { }
+    {
+        _aggregateFactory = new Order.Factory();
+    }
 
     [TestMethod]
     public void Create_order_item_success()
@@ -122,7 +125,7 @@ public class OrderAggregateTest
         var expectedResult = 1;
 
         //Act 
-        var fakeOrder = new Order("1", "fakeName", new Address(street, city, state, country, zipcode), cardTypeId, cardNumber, cardSecurityNumber, cardHolderName, cardExpiration);
+        var fakeOrder = _aggregateFactory.Create("1", "fakeName", new Address(street, city, state, country, zipcode), cardTypeId, cardNumber, cardSecurityNumber, cardHolderName, cardExpiration);
 
         //Assert
         Assert.AreEqual(fakeOrder.DomainEvents.Count, expectedResult);
@@ -145,7 +148,7 @@ public class OrderAggregateTest
         var expectedResult = 2;
 
         //Act 
-        var fakeOrder = new Order("1", "fakeName", new Address(street, city, state, country, zipcode), cardTypeId, cardNumber, cardSecurityNumber, cardHolderName, cardExpiration);
+        var fakeOrder = _aggregateFactory.Create("1", "fakeName", new Address(street, city, state, country, zipcode), cardTypeId, cardNumber, cardSecurityNumber, cardHolderName, cardExpiration);
         fakeOrder.AddDomainEvent(new OrderStartedDomainEvent(fakeOrder, "fakeName", "1", cardTypeId, cardNumber, cardSecurityNumber, cardHolderName, cardExpiration));
         //Assert
         Assert.AreEqual(fakeOrder.DomainEvents.Count, expectedResult);
@@ -165,7 +168,7 @@ public class OrderAggregateTest
         var cardSecurityNumber = "123";
         var cardHolderName = "FakeName";
         var cardExpiration = DateTime.UtcNow.AddYears(1);
-        var fakeOrder = new Order("1", "fakeName", new Address(street, city, state, country, zipcode), cardTypeId, cardNumber, cardSecurityNumber, cardHolderName, cardExpiration);
+        var fakeOrder = _aggregateFactory.Create("1", "fakeName", new Address(street, city, state, country, zipcode), cardTypeId, cardNumber, cardSecurityNumber, cardHolderName, cardExpiration);
         var @fakeEvent = new OrderStartedDomainEvent(fakeOrder, "1", "fakeName", cardTypeId, cardNumber, cardSecurityNumber, cardHolderName, cardExpiration);
         var expectedResult = 1;
 

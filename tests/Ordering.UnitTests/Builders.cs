@@ -16,7 +16,9 @@ public class OrderBuilder
 
     public OrderBuilder(Address address)
     {
-        order = new Order(
+        var orderFactory = new Order.Factory();
+
+        order = orderFactory.Create(
             "userId",
             "fakeName",
             address,

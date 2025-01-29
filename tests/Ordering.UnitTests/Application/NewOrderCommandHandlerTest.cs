@@ -37,8 +37,10 @@ public class NewOrderRequestHandlerTest
         _identityServiceMock.GetUserIdentity().Returns(buyerId);
 
         var LoggerMock = Substitute.For<ILogger<CreateOrderCommandHandler>>();
+
+        var orderAggregateFactory = new Order.Factory();
         //Act
-        var handler = new CreateOrderCommandHandler(_mediator, _orderingIntegrationEventService, _orderRepositoryMock, _identityServiceMock, LoggerMock);
+        var handler = new CreateOrderCommandHandler(_mediator, _orderingIntegrationEventService, _orderRepositoryMock, _identityServiceMock, LoggerMock, orderAggregateFactory);
         var cltToken = new CancellationToken();
         var result = await handler.Handle(fakeOrderCmd, cltToken);
 
@@ -60,7 +62,9 @@ public class NewOrderRequestHandlerTest
 
     private Order FakeOrder()
     {
-        return new Order("1", "fakeName", new Address("street", "city", "state", "country", "zipcode"), 1, "12", "111", "fakeName", DateTime.UtcNow.AddYears(1));
+        var orderFactory = new Order.Factory();
+
+        return orderFactory.Create("1", "fakeName", new Address("street", "city", "state", "country", "zipcode"), 1, "12", "111", "fakeName", DateTime.UtcNow.AddYears(1));
     }
 
     private CreateOrderCommand FakeOrderRequestWithBuyer(Dictionary<string, object> args = null)
