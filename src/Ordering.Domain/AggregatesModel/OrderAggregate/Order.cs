@@ -64,6 +64,11 @@ public class Order
                 Address = address
             };
 
+            if (!order.AddressIsValid())
+            {
+                throw new OrderingDomainException("Invalid address");
+            }
+
             order.AddOrderStartedDomainEvent(userId, userName, cardTypeId, cardNumber,
                 cardSecurityNumber, cardHolderName, cardExpiration);
 
@@ -172,6 +177,12 @@ public class Order
             var itemsStockRejectedDescription = string.Join(", ", itemsStockRejectedProductNames);
             Description = $"The product items don't have stock: ({itemsStockRejectedDescription}).";
         }
+    }
+
+    private bool AddressIsValid()
+    {
+        //TODO: add address validation
+        return true;
     }
 
     private void AddOrderStartedDomainEvent(string userId, string userName, int cardTypeId, string cardNumber,
